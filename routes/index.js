@@ -5,6 +5,7 @@ const config = require('config');
 module.exports = (app) => {
 	app.use(passport.initialize());
 	app.use('/api/auth', require('./auth'));
+	app.use('/api/server', require('./server'));
 	app.get('/api/', (req, res) => {
 		res.render('index');
 	});
