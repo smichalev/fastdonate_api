@@ -6,7 +6,7 @@ module.exports = (router) => {
 	router.get('/list', request);
 };
 
-let request = async (req, res, next) => {
+let request = (req, res, next) => {
 	return Server.findAll({})
 		.then((servers) => {
 			let list = [];
@@ -23,7 +23,8 @@ let request = async (req, res, next) => {
 							list[i].info = {};
 						}
 					}
-				}).then(() => {
+				})
+				.then(() => {
 					return res.send({status: 'success', servers: list});
 				});
 
