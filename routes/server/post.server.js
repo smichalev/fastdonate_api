@@ -9,35 +9,36 @@ module.exports = (router) => {
 
 let request = (req, res, next) => {
 	if (!req.body.port || !req.body.host || !req.body.game || !req.body.mod) {
-		return next({msg: 'Обязательный параметры не были переданы', code: 200});
+		return next({msg: 'Обязательный параметры не были переданы', code: 400});
 	}
 	if (!~gameList.indexOf(req.body.game)) {
-		return next({msg: 'Такая игра не поддерживается!', code: 200});
+		return next({msg: 'Такая игра не поддерживается!', code: 400});
 	}
-	return Server.findOne({
-		where: {
-			host: req.body.host,
-			port: req.body.port
-		}
-	}).then((server) => {
-		if (server) {
-			return next({msg: 'Такой сервер уже есть!', code: 200});
-		}
-		lgsl([{host: req.body.host, port: req.body.port, game: req.body.game}])
-			.then((data) => {
-				if (data[0].status === 'rejected') {
-					return next({msg: 'Вы не можете добавить сервер который сейчас неактивен!', code: 200});
-				}
-				return Server.create({
+	Server.findOne({
+			where: {
+				host: req.body.host,
+				port: req.body.port
+			}
+		})
+		.then((server) => {
+			if (server) {
+				return next({msg: 'Такой сервер уже есть!', code: 400});
+			}
+
+			return lgsl([{host: req.body.host, port: req.body.port, game: req.body.game}])
+				.then((data) => {
+					if (data[0].status === 'rejected') {
+						return next({msg: 'Вы не можете добавить сервер который сейчас неактивен!', code: 400});
+					}
+					return Server.create({
 						creater: +req.body.creater,
 						host: req.body.host,
 						port: req.body.port,
 						game: req.body.game,
 						mod: req.body.mod
-					})
-					.then((data) => {
-						return res.send({status: 'success', server: data});
 					});
-			});
-	}).catch(next);
+				});
+		})
+		.then((data) => res.send({status: 'success', server: data}))
+		.catch(next);
 };
