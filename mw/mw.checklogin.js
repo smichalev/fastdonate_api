@@ -8,7 +8,7 @@ module.exports = async (req, res, next) => {
 			req.body.creater = profile.steamid;
 			return next();
 		}
-		next({msg: 'token not valid', code: 200});
+		return next({msg: 'Ваш токен не валиден, пожалуйста авторизуйтесь заного', code: 401});
 	}
-	return next({msg: 'token not valid', code: 200});
+	return next({msg: 'Ваш токен не валиден, пожалуйста авторизуйтесь заного', code: 401});
 };

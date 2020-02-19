@@ -6,8 +6,33 @@ module.exports = (router) => {
 };
 
 let request = (req, res, next) => {
-	return Server.findAll({})
-		.then((servers) => {
+	let limit = 2;
+	let query = {};
+	if (req.query.page) {
+		if (!/^\d+$/.test(req.query.page)) {
+			return next({msg: 'ID может быть только числом!', code: 400});
+		}
+		req.query.page = +req.query.page;
+		query.limit = limit;
+		if (req.query.page === 0 || req.query.page === 1) {
+			query.offset = 0;
+		}
+		else {
+			query.offset = (req.query.page - 1) * query.limit;
+		}
+	}
+	else {
+		query.limit = limit;
+		query.offset = 0;
+	}
+
+
+	return Promise.all([
+			Server.findAll(query),
+			Server.count({})
+		])
+		.then(([servers, count]) => {
+			let pages = Math.round(count / limit);
 			let list = [];
 			for (let i = 0; i < servers.length; i++) {
 				list.push({
@@ -27,6 +52,6 @@ let request = (req, res, next) => {
 						}
 					}
 				})
-				.then(() => res.send({status: 'success', servers: list}));
+				.then(() => res.send({status: 'success', servers: list, pages}));
 		});
 };
