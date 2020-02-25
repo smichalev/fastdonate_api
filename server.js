@@ -8,6 +8,7 @@ const app = express();
 
 app.use(cors());
 app.use(helmet());
+app.use('/images', express.static(__dirname + '/images'));
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 
@@ -15,7 +16,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 require('./strategy/steam');
-require('./routes')(app);
+require('./routes')(app, express);
 
 app.listen(config.port, () => {
 	console.log(`[PORT: ${ config.port }] Server start!`);

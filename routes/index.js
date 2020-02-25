@@ -1,14 +1,16 @@
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const config = require('config');
+const path = require('path');
 
-module.exports = (app) => {
+module.exports = (app, express) => {
 	app.use(passport.initialize());
 	app.use('/api/auth', require('./auth'));
 	app.use('/api/server', require('./server'));
 	app.get('/api/', (req, res) => {
 		res.render('index');
 	});
+	app.use('/api/images', express.static(path.join(__dirname, '..', 'images')));
 	app.get('/api/profile', async (req, res) => {
 		if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
 			let profile = await jwt.decode(req.headers.authorization.split(' ')[1], config.authorization.secretKey);
