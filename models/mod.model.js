@@ -2,10 +2,10 @@ const path = require('path');
 const db = require(path.join(__dirname, '..', 'lib')).db.sequilize;
 
 let params = {
-	timestamps: true
+	timestamps: false
 };
 
-const User = db.define('user', {
+const Mod = db.define('mod', {
 	id: {
 		type: db.Sequelize.UUID,
 		allowNull: false,
@@ -18,45 +18,38 @@ const User = db.define('user', {
 		unique: false,
 		defaultValue: true
 	},
-	steamid: {
-		type: db.Sequelize.BIGINT,
+	creater: {
+		type: db.Sequelize.UUID,
+		primaryKey: false,
 		allowNull: false,
-		unique: true
-	},
-	login: {
-		type: db.Sequelize.STRING,
-		allowNull: true,
 		unique: false
 	},
-	profile: {
-		type: db.Sequelize.BIGINT,
+	price: {
+		type: db.Sequelize.INTEGER,
 		allowNull: false,
-		unique: true
+		unique: false
 	},
-	avatar: {
-		type: db.Sequelize.JSONB,
-		allowNull: false,
-		unique: false,
-		defaultValue: {}
-	},
-	country: {
-		type: db.Sequelize.STRING,
-		allowNull: false,
-		unique: false,
-		defaultValue: 'RU'
-	},
-	balance: {
-		type: db.Sequelize.BIGINT,
+	sale: {
+		type: db.Sequelize.INTEGER,
 		allowNull: false,
 		unique: false,
 		defaultValue: 0
 	},
-	role: {
+	version: {
 		type: db.Sequelize.STRING,
 		allowNull: false,
-		unique: false,
-		defaultValue: 'USER'
+		unique: false
+	},
+	title: {
+		type: db.Sequelize.STRING,
+		allowNull: false,
+		unique: false
+	},
+	description: {
+		type: db.Sequelize.STRING,
+		allowNull: false,
+		unique: false
 	}
 }, params);
 
-module.exports = User;
+module.exports = Mod;

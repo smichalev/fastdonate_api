@@ -5,51 +5,33 @@ let params = {
 	timestamps: true
 };
 
-const Server = db.define('server', {
+const File = db.define('file', {
 	id: {
 		type: db.Sequelize.UUID,
 		allowNull: false,
 		primaryKey: true,
 		unique: true
 	},
-	active: {
-		type: db.Sequelize.BOOLEAN,
+	parent: {
+		type: db.Sequelize.UUID,
 		allowNull: false,
 		unique: false,
-		defaultValue: true
 	},
 	creater: {
 		type: db.Sequelize.UUID,
 		allowNull: false,
 		unique: false,
 	},
-	host: {
+	type: {
 		type: db.Sequelize.STRING,
 		allowNull: false,
 		unique: false
 	},
-	port: {
-		type: db.Sequelize.INTEGER,
-		allowNull: false,
-		unique: false
-	},
-	game: {
+	path: {
 		type: db.Sequelize.STRING,
 		allowNull: false,
 		unique: false
-	},
-	mod: {
-		type: db.Sequelize.STRING,
-		allowNull: true,
-		unique: false,
-		defaultValue: null
-	},
-	value: {
-		type: db.Sequelize.JSONB,
-		allowNull: false,
-		unique: false,
-		defaultValue: {}
 	}
 }, params);
 
-module.exports = Server;
+module.exports = File;

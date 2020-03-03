@@ -6,7 +6,7 @@ const path = require('path');
 module.exports = (app, express) => {
 	app.use(passport.initialize());
 	app.use('/api/auth', require('./auth'));
-	app.use('/api/server', require('./server'));
+	app.use('/api/mod', require('./mod'));
 	app.get('/api/', (req, res) => {
 		res.render('index');
 	});
