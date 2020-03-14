@@ -1,8 +1,9 @@
 const path = require('path');
 const db = require(path.join(__dirname, '..', 'lib')).db.sequilize;
 
+
 let params = {
-	timestamps: false
+	timestamps: true
 };
 
 const Mod = db.define('mod', {
@@ -20,9 +21,7 @@ const Mod = db.define('mod', {
 	},
 	creater: {
 		type: db.Sequelize.UUID,
-		primaryKey: false,
-		allowNull: false,
-		unique: false
+		allowNull: false
 	},
 	price: {
 		type: db.Sequelize.INTEGER,
@@ -46,10 +45,17 @@ const Mod = db.define('mod', {
 		unique: false
 	},
 	description: {
-		type: db.Sequelize.STRING,
+		type: db.Sequelize.TEXT,
 		allowNull: false,
 		unique: false
-	}
+	},
+	rates: {
+		type: db.Sequelize.INTEGER,
+		allowNull: false,
+		unique: false,
+		defaultValue: 0
+	},
 }, params);
+
 
 module.exports = Mod;

@@ -1,4 +1,7 @@
 const Mod = require('models/mod.model');
+const User = require('models/user.model');
+
+require('models/references');
 
 module.exports = (router) => {
 	router.get('/', request);
@@ -24,15 +27,20 @@ let request = (req, res, next) => {
 		query.limit = limit;
 		query.offset = 0;
 	}
-
+	query.include = [
+		{
+			association: 'Creater',
+			attributes: ['id', 'login', 'avatar']
+		}
+	];
 
 	return Promise.all([
-			Mod.findAll(query),
-			Mod.count({})
-		])
+		Mod.findAll(query),
+		Mod.count({})
+	])
 		.then(([mods, count]) => {
-			let pages = Math.round(count / limit);
-			res.send({status: 'success', mods, page: req.query.page, pages});
+			let pages = Math.ceil(count / limit);
+			res.send({status: 'success', mods, page: req.query.page === 0 ? 1 : req.query.page, pages});
 		})
 		.catch((err) => next({}));
 };

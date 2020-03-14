@@ -2,6 +2,7 @@ const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const config = require('config');
 const path = require('path');
+const User = require(path.join(__dirname, '..', 'models', 'user.model'));
 
 module.exports = (app, express) => {
 	app.use(passport.initialize());
@@ -11,13 +12,38 @@ module.exports = (app, express) => {
 		res.render('index');
 	});
 	app.use('/api/images', express.static(path.join(__dirname, '..', 'images')));
-	app.get('/api/profile', async (req, res) => {
+	app.get('/api/profile', (req, res) => {
 		if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
-			let profile = await jwt.decode(req.headers.authorization.split(' ')[1], config.authorization.secretKey);
-			return res.status(200).send({status: 'success', profile: profile ? profile : {}});
+			return Promise.resolve()
+				.then(() => {
+					return jwt.decode(req.headers.authorization.split(' ')[1], config.authorization.secretKey);
+				})
+				.then((profile) => {
+					if (!profile) {
+						return next({msg: 'Пользователь не найден', code: 404});
+					}
+					return User.findOne({
+						where: {
+							id: profile.id
+						},
+						raw: true
+					})
+						.then((data) => {
+							if (!data) {
+								return res.status(200).send({status: 'success', profile: {}});
+							}
+							return res.status(200).send({status: 'success', profile: data});
+						})
+						.catch(() => {
+							return res.status(200).send({status: 'success', profile: {}});
+						});
+				})
+				.catch((err) => {
+					console.log(err);
+				});
 		}
 		else {
-			res.status(200).send({status: 'success', profile: {}});
+			return next({msg: 'Неверно переданы параметры', code: 400});
 		}
 	});
 	app.use((err, req, res, next) => {

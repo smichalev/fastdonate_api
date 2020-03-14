@@ -1,6 +1,7 @@
 const path = require('path');
 const db = require(path.join(__dirname, '..', 'lib')).db.sequilize;
 
+
 let params = {
 	timestamps: true
 };
@@ -58,5 +59,7 @@ const User = db.define('user', {
 		defaultValue: 'USER'
 	}
 }, params);
+
+
 
 module.exports = User;

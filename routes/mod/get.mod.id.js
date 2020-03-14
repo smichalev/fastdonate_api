@@ -1,4 +1,5 @@
 const Mods = require('models/mod.model');
+const User = require('models/user.model');
 
 module.exports = (router) => {
 	router.get('/:id', request);
@@ -6,10 +7,15 @@ module.exports = (router) => {
 
 function request(req, res, next) {
 	return Mods.findOne({
-			where: {
-				id: req.params.id
+		where: {
+			id: req.params.id
+		},
+		include: [
+			{
+				association: 'Creater'
 			}
-		})
+		]
+	})
 		.then((mod) => {
 			if (!mod) {
 				return next({msg: 'Модификация не найдена', code: 404});
