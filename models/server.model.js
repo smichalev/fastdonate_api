@@ -18,7 +18,7 @@ const Server = db.define('server', {
 		unique: false,
 		defaultValue: true
 	},
-	creater: {
+	creator: {
 		type: db.Sequelize.UUID,
 		allowNull: false,
 		unique: false,

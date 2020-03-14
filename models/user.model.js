@@ -47,7 +47,7 @@ const User = db.define('user', {
 		defaultValue: 'RU'
 	},
 	balance: {
-		type: db.Sequelize.BIGINT,
+		type: db.Sequelize.REAL,
 		allowNull: false,
 		unique: false,
 		defaultValue: 0

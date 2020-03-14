@@ -19,5 +19,7 @@ require('./strategy/steam');
 require('./routes')(app, express);
 
 app.listen(config.port, () => {
-	console.log(`[PORT: ${ config.port }] Server start!`);
+	console.log('');
+	console.log('[\x1b[36mFastDonate\x1b[0m] API Server was successfully started at port \033[31m'+config.port+'\x1b[0m.');
+	console.log('');
 });

@@ -3,8 +3,8 @@ const Mod = require('./mod.model');
 
 Mod.belongsTo(User, {
 	hooks: false,
-	as: 'Creater',
-	foreignKey: 'creater',
+	as: 'Creator',
+	foreignKey: 'creator',
 	targetKey: 'id'
 });
 
@@ -14,6 +14,6 @@ User.hasMany(Mod, {
 		singular: 'Mod',
 		plural: 'Mods'
 	},
-	foreignKey: 'creater',
+	foreignKey: 'creator',
 	sourceKey: 'id'
 });

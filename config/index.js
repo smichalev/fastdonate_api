@@ -5,7 +5,7 @@ module.exports = {
 		port: 5432,
 		username: 'postgres',
 		password: 'postgres',
-		database: 'fastdonate',
+		database: 'fast',
 		dialect: 'postgres'
 	},
 	domain: 'dev.fastdonate.local',

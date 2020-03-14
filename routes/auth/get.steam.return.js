@@ -11,7 +11,8 @@ module.exports = (router) => {
 
 function request(req, res, next) {
 	let {steamid, personaname, avatarfull, loccountrycode} = req.user._json;
-	let profileurl = req.user._json.profileurl.split('/')[4];
+	// let profileurl = req.user._json.steamid.split('/')[4];
+	let profileurl = req.user._json.steamid;
 
 	return User.findOne({
 			where: {
@@ -36,7 +37,10 @@ function request(req, res, next) {
 		})
 		.then((result) => {
 			let token = jwt.sign(result.dataValues, config.authorization.secretKey);
-			res.render('authorization', {token});
+			console.log(result);
+			console.log(result.dataValues, config.authorization.secretKey);
+			console.log(token);
+			res.status(302).render('authorization', {token});
 		})
 		.catch((err) => next(err));
 }

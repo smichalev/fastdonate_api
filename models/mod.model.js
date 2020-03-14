@@ -19,7 +19,7 @@ const Mod = db.define('mod', {
 		unique: false,
 		defaultValue: true
 	},
-	creater: {
+	creator: {
 		type: db.Sequelize.UUID,
 		allowNull: false
 	},
@@ -28,7 +28,7 @@ const Mod = db.define('mod', {
 		allowNull: false,
 		unique: false
 	},
-	sale: {
+	discount: {
 		type: db.Sequelize.INTEGER,
 		allowNull: false,
 		unique: false,

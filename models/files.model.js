@@ -17,7 +17,7 @@ const File = db.define('file', {
 		allowNull: false,
 		unique: false,
 	},
-	creater: {
+	creator: {
 		type: db.Sequelize.UUID,
 		allowNull: false,
 		unique: false,

@@ -8,11 +8,12 @@ module.exports = (app, express) => {
 	app.use(passport.initialize());
 	app.use('/api/auth', require('./auth'));
 	app.use('/api/mod', require('./mod'));
+	app.use('/api/servers', require('./servers'));
 	app.get('/api/', (req, res) => {
 		res.render('index');
 	});
 	app.use('/api/images', express.static(path.join(__dirname, '..', 'images')));
-	app.get('/api/profile', (req, res) => {
+	app.get('/api/profile', (req, res, next) => {
 		if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
 			return Promise.resolve()
 				.then(() => {
