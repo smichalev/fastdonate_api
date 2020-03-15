@@ -1,4 +1,4 @@
-const Mod = require('models/mod.model');
+const Server = require('models/server.model');
 const User = require('models/user.model');
 
 require('models/references');
@@ -35,12 +35,12 @@ let request = (req, res, next) => {
 	];
 
 	return Promise.all([
-		Mod.findAll(query),
-		Mod.count({})
+		Server.findAll(query),
+		Server.count({})
 	])
-		.then(([mods, count]) => {
+		.then(([servers, count]) => {
 			let pages = Math.ceil(count / limit);
-			res.send({status: 'success', mods, page: req.query.page === 0 ? 1 : req.query.page, pages});
+			res.send({status: 'success', servers, page: req.query.page === 0 ? 1 : req.query.page, pages});
 		})
-		.catch((err) => next({}));
+		.catch((err) => next({msg: 'Номер страницы может быть только числом.', code: 400, err}));
 };

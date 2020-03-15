@@ -1,4 +1,4 @@
-const Mods = require('models/mod.model');
+const Server = require('models/server.model');
 const path = require('path');
 const mw = require(path.join(__dirname, '..', '..', 'mw'));
 
@@ -7,14 +7,14 @@ module.exports = (router) => {
 };
 
 function request(req, res, next) {
-	return Mods.findOne({
+	return Server.findOne({
 			where: {
 				id: req.params.id
 			}
 		})
-		.then((mod) => {
-			if (!mod) {
-				return next({msg: 'Модификация не найдена', code: 404});
+		.then((server) => {
+			if (!server) {
+				return next({msg: 'Сервер не найден', code: 404});
 			}
 
 			let {price, discount, version, title, description} = req.body;
@@ -24,23 +24,23 @@ function request(req, res, next) {
 				return next({msg: 'Не все параметры переданы', code: 400});
 			}
 
-			mod.price = price;
-			mod.discount = discount;
-			mod.version = version;
-			mod.title = title;
-			mod.description = description;
+			server.price = price;
+			server.discount = discount;
+			server.version = version;
+			server.title = title;
+			server.description = description;
 
 			if (req.body.profile.role === 'ADMIN') {
-				return mod.save().then((data) => {
-					res.send({status: 'success', mod: data});
+				return server.save().then((data) => {
+					res.send({status: 'success', server: data});
 				});
 			}
 			else {
-				if (req.body.profile.id !== mod.creator) {
+				if (req.body.profile.id !== server.creator) {
 					return next({msg: 'У Вас нет прав для изменения этой модификации.', code: 400});
 				}
-				return mod.save().then((data) => {
-					res.send({status: 'success', mod: data});
+				return server.save().then((data) => {
+					res.send({status: 'success', server: data});
 				});
 			}
 		})

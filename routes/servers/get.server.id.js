@@ -1,4 +1,4 @@
-const Mods = require('models/mod.model');
+const Server = require('models/server.model');
 const User = require('models/user.model');
 
 module.exports = (router) => {
@@ -6,7 +6,7 @@ module.exports = (router) => {
 };
 
 function request(req, res, next) {
-	return Mods.findOne({
+	return Server.findOne({
 		where: {
 			id: req.params.id
 		},
@@ -16,11 +16,11 @@ function request(req, res, next) {
 			}
 		]
 	})
-		.then((mod) => {
-			if (!mod) {
+		.then((server) => {
+			if (!server) {
 				return next({msg: 'Модификация не найдена', code: 404});
 			}
-			res.send({status: 'success', mod});
+			res.send({status: 'success', server});
 		})
 		.catch((err) => next({}));
 }
