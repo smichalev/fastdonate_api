@@ -1,14 +1,11 @@
-const User = require('models/user.model');
-const Server = require('models/server.model');
-const Files = require('models/files.model');
-const Mod = require('models/mod.model');
-
-return Promise.all([
-		User.sync({force: true}),
-		Server.sync({force: true}),
-		Files.sync({force: true}),
-		Mod.sync({force: true})
-	]).then(() => {
+const fs = require('fs');
+let tables = [];
+fs.readdirSync('models').forEach(file => {
+	if(file !== 'references.js'){
+		tables[tables.length] = require('models/'+file.slice(0, -3));
+		tables[tables.length-1] = tables[tables.length-1].sync({force: true});
+	}
+});
+return Promise.all(tables).then(() => {
 	console.log('TABLES SUCCESSFULLY RECREATED');
 })
-
