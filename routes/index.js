@@ -9,6 +9,7 @@ module.exports = (app, express) => {
 	app.use('/api/auth', require('./auth'));
 	app.use('/api/mod', require('./mod'));
 	app.use('/api/servers', require('./servers'));
+	app.use('/api/users', require('./users'));
 	app.get('/api/', (req, res) => {
 		res.render('index');
 	});
