@@ -39,6 +39,7 @@ let request = (req, res, next) => {
 		Server.count({})
 	])
 		.then(([servers, count]) => {
+			console.log(count);
 			let pages = Math.ceil(count / limit);
 			res.send({status: 'success', servers, page: req.query.page === 0 ? 1 : req.query.page, pages});
 		})

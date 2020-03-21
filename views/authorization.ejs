@@ -1,8 +1,4 @@
-<div id="token" style="display: none"><%= token %></div>
-
-<div>Redirect...</div>
-
 <script>
-	localStorage.setItem('token', document.getElementById('token').innerHTML);
+	localStorage.setItem('token', '<%= token %>');
 	window.location.replace("http://dev.fastdonate.local/");
 </script>

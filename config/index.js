@@ -5,7 +5,7 @@ module.exports = {
 		port: 5432,
 		username: 'postgres',
 		password: 'postgres',
-		database: 'fast',
+		database: 'fastdonate',
 		dialect: 'postgres'
 	},
 	domain: 'dev.fastdonate.local',
@@ -14,5 +14,8 @@ module.exports = {
 	authorization: {
 		secretKey: 'supersecretjwtkeyintheworld',
 		steamApiKey: 'BCCF96617A7EBE4D4373410F0BC1A348'
+	},
+	settings: {
+		maxCountElementOnPage: 14
 	}
 };
