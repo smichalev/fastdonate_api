@@ -1,0 +1,22 @@
+{
+  "errors": {
+    "Not connect database": "Not connect database",
+    "User not found": "User not found",
+    "Invalid parameters": "Invalid parameters",
+    "Unknown error": "Unknown error",
+    "Not correct query API": "Not correct query API",
+    "Not found": "Not found",
+    "Script not found": "Script not found",
+    "Not enough rights for action": "Not enough rights for action",
+    "Page not found, maybe she will appear in the future...": "Page not found, maybe she will appear in the future...",
+    "Required field is not filled": "Required field is not filled",
+    "Invalid product price": "Invalid product price",
+    "Invalid discount percentage": "Invalid discount percentage",
+    "Available for authorized users only": "Available for authorized users only",
+    "Token not valid, please do authorization again": "Token not valid, please do authorization again",
+    "Your are not logged in": "Your are not logged in",
+    "Session over, please re-authorize": "Session over, please re-authorize"
+  },
+  "success": {
+  }
+}

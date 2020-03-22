@@ -1,33 +1,41 @@
 const Mods = require('models/mod.model');
 const path = require('path');
 const mw = require(path.join(__dirname, '..', '..', 'mw'));
+const {ApiError} = require('errors');
 
 module.exports = (router) => {
 	router.delete('/:id', mw.checkLogin, request);
 };
 
-function request(req, res, next) {
-	return Mods.findOne({
+async function request(req, res, next) {
+	let mod;
+	try {
+		mod = await Mods.findOne({
 			where: {
 				id: req.params.id
 			}
 		})
-		.then((mod) => {
-			if (!mod) {
-				return next({msg: 'Модификация не была найдена. Удаление невозможно.', code: 404});
-			}
-			if (req.body.profile.role === 'ADMIN') {
-				return mod.destroy().then(() => {
-					return next({msg: 'Модификация успешно удалена.', code: 200});
-				});
+	} catch (e) {
+		return next(e);
+	}
+	if (!mod) {
+		return next(new ApiError(ApiError.CODES.SCRIPT_NOT_FOUND));
+	}
+	try {
+		if (req.body.profile.role === 'ADMIN') {
+			await mod.destroy();
+			return res.json({message: 'Модификация успешно удалена'});
+		}
+		else {
+			if (mod.creator !== req.session.user.id) {
+				return next(new ApiError(ApiError.CODES.NOT_ENOUGH_RIGHTS));
 			}
 			else {
-				if (mod.creator !== req.body.profile.id) {
-					return next({msg: 'У Вас нет прав для удаления этой модификации.', code: 400});
-				}
-				return mod.destroy();
+				await mod.destroy();
+				return res.json({message: 'Модификация успешно удалена'});
 			}
-		})
-		.then(() => next({msg: 'Модификация успешно удалена.', code: 404}))
-		.catch((err) => next({}));
+		}
+	} catch (e) {
+		return next(e);
+	}
 }

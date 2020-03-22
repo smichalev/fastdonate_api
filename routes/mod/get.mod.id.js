@@ -1,26 +1,29 @@
 const Mods = require('models/mod.model');
-const User = require('models/user.model');
+const {ApiError} = require('errors');
 
 module.exports = (router) => {
 	router.get('/:id', request);
 };
 
-function request(req, res, next) {
-	return Mods.findOne({
-		where: {
-			id: req.params.id
-		},
-		include: [
-			{
-				association: 'Creator'
-			}
-		]
-	})
-		.then((mod) => {
-			if (!mod) {
-				return next({msg: 'Модификация не найдена', code: 404});
-			}
-			res.send({status: 'success', mod});
+async function request(req, res, next) {
+	let mod;
+	try {
+		mod = await Mods.findOne({
+			where: {
+				id: req.params.id
+			},
+			include: [
+				{
+					association: 'Creator'
+				}
+			]
 		})
-		.catch((err) => next({}));
+	} catch (e) {
+		return next(e);
+	}
+
+	if (!mod) {
+		return next(new ApiError(ApiError.CODES.SCRIPT_NOT_FOUND));
+	}
+	return res.send({mod});
 }

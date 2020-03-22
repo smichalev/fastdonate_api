@@ -2,42 +2,48 @@ const Mods = require('models/mod.model');
 const path = require('path');
 const mw = require(path.join(__dirname, '..', '..', 'mw'));
 const uuid = require('uuid');
+const {ApiError} = require('errors');
 
 module.exports = (router) => {
 	router.post('/', mw.checkLogin, request);
 };
 
-function request(req, res, next) {
+async function request(req, res, next) {
+	let script;
 	let {price, discount, version, title, description} = req.body;
-	let creator = req.body.profile.id;
+	let creator = req.session.user.id;
 
-	console.log(title , description, version, creator, isNaN(price), price, isNaN(discount), discount);
 	price = +price;
 	discount = +discount;
 
-	if(!title || !description || !version || !creator || isNaN(price) || isNaN(discount))
-		return next({msg: 'Не заполнено обязательное поле!', code: 400});
+	if (!title || !description || !version || !creator || isNaN(price) || isNaN(discount)) {
+		return next(new ApiError(ApiError.CODES.REQUIRED_FIELD_IS_NOT_FILLED));
+	}
 
-	if(price < 0)
-		return next({msg: 'Неверно указана цена товара!', code: 400});
-	
-	if(price === 0) 
+	if (price < 0) {
+		return next(new ApiError(ApiError.CODES.INVALID_PRODUCT_PRICE));
+	}
+
+	if (price === 0) {
 		discount = 0;
-	else
-		if(discount < 0 || discount > 100)
-			return next({msg: 'Неверно указан процент скидки!', code: 400});
+	}
+	else if (discount < 0 || discount > 100) {
+		return next(new ApiError(ApiError.CODES.INVALID_DISCOUNT_PERCENTAGE));
+	}
 
-	return Mods.create({
-		id: uuid.v4(),
-		creator,
-		price,
-		version,
-		title,
-		description,
-		discount
-	})
-		.then((mod) => {
-			res.send({status: 'success', mod});
-		})
-		.catch((err) => next({msg: err, code: 400}));
+	try {
+		script = await Mods.create({
+			id: uuid.v4(),
+			creator,
+			price,
+			version,
+			title,
+			description,
+			discount
+		});
+	} catch (e) {
+		return next(e);
+	}
+
+	return res.send({mod: script});
 }

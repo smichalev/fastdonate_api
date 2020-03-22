@@ -1,0 +1,22 @@
+{
+  "errors": {
+    "Not connect database": "Нет соединения с базой данных",
+    "User not found": "Пользователь не найден",
+    "Invalid parameters": "Неверно переданы параметры",
+    "Unknown error": "Неизвестная ошибка",
+    "Not correct query API": "Неправильный метод API",
+    "Not found": "Ничего не найдено",
+    "Script not found": "Скрипт не был найден",
+    "Not enough rights for action": "У Вас нет прав для этого действия",
+    "Page not found, maybe she will appear in the future...": "Такой страницы пока еще нет, возможно она появится в будущем...",
+    "Required field is not filled": "Обязательное поле не заполнено",
+    "Invalid product price": "Неверно указана цена товара",
+    "Invalid discount percentage": "Неверно указан процент скидки",
+    "Available for authorized users only": "Доступно только для авторизированных пользователей",
+    "Token not valid, please do authorization again": "Токен не валиден, пожалуйста авторизируйтесь снова",
+    "Your are not logged in": "Вы не авторизированны",
+    "Session over, please re-authorize": "Сессия закончена, пожалуйста переавторизуйтесь"
+  },
+  "success": {
+  }
+}

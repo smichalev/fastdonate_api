@@ -1,6 +1,6 @@
 const path = require('path');
 const fs = require('fs');
-const camelCase = require('camel-case');
+const {camelCase} = require('camel-case');
 
 fs.readdirSync(__dirname)
 	.filter((filename) => filename !== 'index.js')
