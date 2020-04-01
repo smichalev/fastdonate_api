@@ -14,22 +14,26 @@ module.exports = (router) => {
 };
 
 async function request(req, res, next) {
-  let script, result, hashtags = [], promises = [], hashes = {};
+  let script, result, hashtags = [], promises = [], hashes = {}, imageFile, modFile;
   let {price, discount, version, title, description} = req.body;
   let hash = req.body.hash ? req.body.hash.split(',') : [];
 
   let imageFolder = path.join(__dirname, '..', '..', 'images');
   let fileFolder = path.join(__dirname, '..', '..', 'files');
 
-  if (!req.files || !req.files.image || !req.files.mod) {
+  if (!req.files || !req.files.mod) {
     return next(new ApiError(ApiError.CODES.REQUIRED_FIELD_IS_NOT_FILLED));
   }
-  req.files.image.mv(path.join(__dirname));
-  let imageFile = req.files.image.md5 + '.' + req.files.image.name.split('.')[req.files.image.name.split('.').length - 1],
-    modFile = req.files.mod.md5 + '.' + req.files.mod.name.split('.')[req.files.mod.name.split('.').length - 1];
+  if (req.files.image) {
+    req.files.image.mv(path.join(__dirname));
+    imageFile = req.files.image.md5 + '.' + req.files.image.name.split('.')[req.files.image.name.split('.').length - 1];
+  }
+  modFile = req.files.mod.md5 + '.' + req.files.mod.name.split('.')[req.files.mod.name.split('.').length - 1];
 
   try {
-    await fs.writeFileSync(imageFolder + '/' + req.files.image.md5 + '.' + req.files.image.name.split('.')[req.files.image.name.split('.').length - 1], Buffer.from(req.files.image.data, 'utf8'));
+    if (req.files.image) {
+      await fs.writeFileSync(imageFolder + '/' + req.files.image.md5 + '.' + req.files.image.name.split('.')[req.files.image.name.split('.').length - 1], Buffer.from(req.files.image.data, 'utf8'));
+    }
     await fs.writeFileSync(fileFolder + '/' + req.files.mod.md5 + '.' + req.files.mod.name.split('.')[req.files.mod.name.split('.').length - 1], Buffer.from(req.files.mod.data, 'utf8'));
   }
   catch (e) {
@@ -79,7 +83,7 @@ async function request(req, res, next) {
       title,
       description,
       discount,
-      cover: imageFile
+      cover: req.files.image ? imageFile : null
     });
   }
   catch (e) {
@@ -125,13 +129,15 @@ async function request(req, res, next) {
       type: 'script',
       path: modFile
     });
-    await Files.create({
-      id: uuid.v4(),
-      parent: randomID,
-      creator,
-      type: 'cover',
-      path: imageFile
-    });
+    if (req.files.image) {
+      await Files.create({
+        id: uuid.v4(),
+        parent: randomID,
+        creator,
+        type: 'cover',
+        path: imageFile
+      });
+    }
   }
   catch (e) {
     return next(e);

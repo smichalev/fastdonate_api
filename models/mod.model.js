@@ -41,7 +41,8 @@ const Mod = db.define('mod', {
   },
   cover: {
     type: db.Sequelize.STRING,
-    allowNull: true
+    allowNull: true,
+    defaultValue: null
   },
   title: {
     type: db.Sequelize.STRING,

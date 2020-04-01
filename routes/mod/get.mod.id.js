@@ -30,5 +30,11 @@ async function request(req, res, next) {
   if (!mod) {
     return next(new ApiError(ApiError.CODES.SCRIPT_NOT_FOUND));
   }
+  if (mod.cover) {
+    mod.cover = '/api/images/' + mod.cover;
+  }
+  else {
+    mod.cover = null;
+  }
   return res.send({mod});
 }

@@ -64,7 +64,12 @@ async function request(req, res, next) {
   }
 
   for (let i = 0; i < scripts.length; i++) {
-    scripts[i].cover = '/api/images/' + scripts[i].cover;
+    if (scripts[i].cover) {
+      scripts[i].cover = '/api/images/' + scripts[i].cover;
+    }
+    else {
+      scripts[i].cover = null;
+    }
   }
 
   return res.send({mods: scripts, page, pages});
