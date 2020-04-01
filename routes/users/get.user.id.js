@@ -1,20 +1,35 @@
-const User = require('models/user.model');
+const Users = require('models/user.model');
+const path = require('path');
+const mw = require(path.join(__dirname, '..', '..', 'mw'));
+const {ApiError} = require('errors');
 
 module.exports = (router) => {
-	router.get('/:id', request);
+  router.get('/:id', mw.checkSession, request);
 };
 
-function request(req, res, next) {
-	return User.findOne({
-		where: {
-			id: req.params.id
-		}
-	})
-		.then((user) => {
-			if (!user) {
-				return next({msg: 'Пользователь не найден', code: 404});
-			}
-			res.send({status: 'success', user});
-		})
-		.catch((err) => next({}));
+async function request(req, res, next) {
+  let user;
+  let query = {
+    where: {
+      id: req.params.id
+    }
+  };
+
+  if (req.session.user.id !== req.params.id) {
+    query.attributes = {
+      exclude: ['balance']
+    };
+  }
+
+  try {
+    user = await Users.findOne(query);
+
+    if (!user) {
+      return next(new ApiError(ApiError.CODES.NOT_FOUND));
+    }
+    return res.json({user});
+  }
+  catch (e) {
+    return next(e);
+  }
 }

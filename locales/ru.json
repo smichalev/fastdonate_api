@@ -15,7 +15,8 @@
     "Available for authorized users only": "Доступно только для авторизированных пользователей",
     "Token not valid, please do authorization again": "Токен не валиден, пожалуйста авторизируйтесь снова",
     "Your are not logged in": "Вы не авторизированны",
-    "Session over, please re-authorize": "Сессия закончена, пожалуйста переавторизуйтесь"
+    "Session over, please re-authorize": "Сессия закончена, пожалуйста переавторизуйтесь",
+    "Too many hashtags": "Слишком много хештегов"
   },
   "success": {
   }

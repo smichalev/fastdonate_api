@@ -15,7 +15,8 @@
     "Available for authorized users only": "Available for authorized users only",
     "Token not valid, please do authorization again": "Token not valid, please do authorization again",
     "Your are not logged in": "Your are not logged in",
-    "Session over, please re-authorize": "Session over, please re-authorize"
+    "Session over, please re-authorize": "Session over, please re-authorize",
+    "Too many hashtags": "Too many hashtags"
   },
   "success": {
   }
