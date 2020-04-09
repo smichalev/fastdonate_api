@@ -16,7 +16,10 @@
     "Token not valid, please do authorization again": "Токен не валиден, пожалуйста авторизируйтесь снова",
     "Your are not logged in": "Вы не авторизированны",
     "Session over, please re-authorize": "Сессия закончена, пожалуйста переавторизуйтесь",
-    "Too many hashtags": "Слишком много хештегов"
+    "Too many hashtags": "Слишком много хештегов",
+    "Invalid attachment format": "Не верный формат вложения",
+    "You post very often": "Вы постите очень часто",
+    "The maximum length of the comment should not exceed 180 characters": "Максимальная длина комментария не должна превышать 180 символов"
   },
   "success": {
   }

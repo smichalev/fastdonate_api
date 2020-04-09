@@ -32,9 +32,19 @@ async function request(req, res, next) {
 
   try {
     if (req.files.image) {
-      await fs.writeFileSync(imageFolder + '/' + req.files.image.md5 + '.' + req.files.image.name.split('.')[req.files.image.name.split('.').length - 1], Buffer.from(req.files.image.data, 'utf8'));
+      if (req.files.image.mimetype === 'image/jpeg' || req.files.image.mimetype === 'image/png') {
+        await fs.writeFileSync(imageFolder + '/' + req.files.image.md5 + '.' + req.files.image.name.split('.')[req.files.image.name.split('.').length - 1], Buffer.from(req.files.image.data, 'utf8'));
+      }
+      else {
+        return next(new ApiError(ApiError.CODES.INVALID_ATTACHMENT_FORMAT));
+      }
     }
-    await fs.writeFileSync(fileFolder + '/' + req.files.mod.md5 + '.' + req.files.mod.name.split('.')[req.files.mod.name.split('.').length - 1], Buffer.from(req.files.mod.data, 'utf8'));
+    if (req.files.mod.mimetype === 'application/zip' || req.files.mod.mimetype === 'application/gzip' || req.files.mod.mimetype === 'application/x-tar' || req.files.mod.mimetype === 'application/x-rar-compressed') {
+      await fs.writeFileSync(fileFolder + '/' + req.files.mod.md5 + '.' + req.files.mod.name.split('.')[req.files.mod.name.split('.').length - 1], Buffer.from(req.files.mod.data, 'utf8'));
+    }
+    else {
+      return next(new ApiError(ApiError.CODES.INVALID_ATTACHMENT_FORMAT));
+    }
   }
   catch (e) {
     return next(e);

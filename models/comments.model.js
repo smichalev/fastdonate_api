@@ -1,12 +1,11 @@
 const path = require('path');
 const db = require(path.join(__dirname, '..', 'lib')).db.sequilize;
 
-
 let params = {
   timestamps: true
 };
 
-const Mod = db.define('mod', {
+const Comment = db.define('comment', {
   id: {
     type: db.Sequelize.UUID,
     allowNull: false,
@@ -19,48 +18,28 @@ const Mod = db.define('mod', {
     unique: false,
     defaultValue: true
   },
-  creator: {
+  essence: {
     type: db.Sequelize.UUID,
-    allowNull: false
-  },
-  price: {
-    type: db.Sequelize.INTEGER,
     allowNull: false,
     unique: false
   },
-  comments: {
-    type: db.Sequelize.INTEGER,
-    allowNull: false,
-    unique: false,
-    defaultValue: 0
-  },
-  discount: {
-    type: db.Sequelize.INTEGER,
-    allowNull: false,
-    unique: false,
-    defaultValue: 0
-  },
-  version: {
-    type: db.Sequelize.STRING,
-    allowNull: false,
-    unique: false
-  },
-  cover: {
-    type: db.Sequelize.STRING,
+  parent: {
+    type: db.Sequelize.UUID,
     allowNull: true,
+    unique: false,
     defaultValue: null
   },
-  title: {
-    type: db.Sequelize.STRING,
+  creator: {
+    type: db.Sequelize.UUID,
     allowNull: false,
     unique: false
   },
-  description: {
+  text: {
     type: db.Sequelize.TEXT,
     allowNull: false,
     unique: false
   },
-  rates: {
+  rate: {
     type: db.Sequelize.INTEGER,
     allowNull: false,
     unique: false,
@@ -68,5 +47,4 @@ const Mod = db.define('mod', {
   }
 }, params);
 
-
-module.exports = Mod;
+module.exports = Comment;

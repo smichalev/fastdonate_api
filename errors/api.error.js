@@ -15,7 +15,10 @@ const CODES = {
   AVAILABLE_FOR_AUTHORIZED_USERS_ONLY: 12,
   TOKEN_NOT_VALID: 13,
   YOU_ARE_NOT_LOGIN: 14,
-  SESSION_DIE: 15
+  SESSION_DIE: 15,
+  INVALID_ATTACHMENT_FORMAT: 16,
+  POST_VERY_OFTEN: 17,
+  VERY_LARGE_COMMENT: 18
 };
 const messages = {
   [CODES.UNKNOWN_ERROR]: {
@@ -85,6 +88,18 @@ const messages = {
   [CODES.SESSION_DIE]: {
     status: 401,
     message: `Session over, please re-authorize`
+  },
+  [CODES.INVALID_ATTACHMENT_FORMAT]: {
+    status: 400,
+    message: `Invalid attachment format`
+  },
+  [CODES.POST_VERY_OFTEN]: {
+    status: 400,
+    message: `You post very often`
+  },
+  [CODES.VERY_LARGE_COMMENT]: {
+    status: 400,
+    message: `The maximum length of the comment should not exceed 180 characters`
   }
 };
 

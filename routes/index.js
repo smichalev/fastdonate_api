@@ -13,6 +13,7 @@ module.exports = (app, express) => {
   app.use(passport.initialize());
   app.use('/api/auth', require(path.join(__dirname, 'auth')));
   app.use('/api/mod', require(path.join(__dirname, 'mod')));
+  app.use('/api/comment', require(path.join(__dirname, 'comment')));
   app.use('/api/users', require(path.join(__dirname, 'users')));
   app.get('/api/', (req, res) => {
     res.render('index');

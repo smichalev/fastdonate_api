@@ -55,6 +55,7 @@ async function request(req, res, next) {
   if (!scripts.length && count) {
     return next(new ApiError(ApiError.CODES.PAGE_NOT_FOUND));
   }
+
   let page;
   if (!req.query.page || req.query.page === 0 || req.query.page === 1) {
     page = 1;

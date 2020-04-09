@@ -16,7 +16,7 @@ module.exports = {
     steamApiKey: 'BCCF96617A7EBE4D4373410F0BC1A348'
   },
   settings: {
-    maxCountElementOnPage: 14,
+    maxCountElementOnPage: 10,
     maxHashtags: 6
   }
 };

@@ -3,6 +3,7 @@ const User = require(path.join(__dirname, 'user.model'));
 const Mod = require(path.join(__dirname, 'mod.model'));
 const Hash = require(path.join(__dirname, 'hash.model'));
 const Hashmod = require(path.join(__dirname, 'hashmod.model'));
+const Comment = require(path.join(__dirname, 'comments.model'));
 
 Mod.belongsTo(User, {
   hooks: false,
@@ -50,6 +51,23 @@ Hash.belongsToMany(Mod, {
   otherKey: 'mod_id',
   paranoid: true,
   onDelete: 'SET NULL'
+});
+
+Comment.belongsTo(User, {
+  hooks: false,
+  as: 'Creator',
+  foreignKey: 'creator',
+  targetKey: 'id'
+});
+
+User.hasMany(Comment, {
+  hooks: false,
+  as: {
+    singular: 'Comment',
+    plural: 'Comments'
+  },
+  foreignKey: 'creator',
+  sourceKey: 'id'
 });
 
 

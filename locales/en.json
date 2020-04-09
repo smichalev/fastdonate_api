@@ -16,7 +16,10 @@
     "Token not valid, please do authorization again": "Token not valid, please do authorization again",
     "Your are not logged in": "Your are not logged in",
     "Session over, please re-authorize": "Session over, please re-authorize",
-    "Too many hashtags": "Too many hashtags"
+    "Too many hashtags": "Too many hashtags",
+    "Invalid attachment format": "Invalid attachment format",
+    "You post very often": "You post very often",
+    "The maximum length of the comment should not exceed 180 characters": "The maximum length of the comment should not exceed 180 characters"
   },
   "success": {
   }
