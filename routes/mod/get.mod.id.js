@@ -1,13 +1,22 @@
-const Mods = require('models/mod.model');
+const db = require('lib/lib.db').sequilize;
+
 const {ApiError} = require('errors');
+
+const Mods = require('models/mod.model');
 
 module.exports = (router) => {
   router.get('/:id', request);
 };
 
-async function request(req, res, next) {
-  let mod;
+let request = async (req, res, next) => {
+  let dbtransaction;
+
   try {
+    dbtransaction = await db.transaction();
+    let param = {transaction: dbtransaction};
+
+    let mod;
+
     mod = await Mods.findOne({
       where: {
         id: req.params.id
@@ -20,21 +29,30 @@ async function request(req, res, next) {
         {
           association: 'Creator'
         }
-      ]
+      ],
+      ...param
     });
+
+    if (!mod) {
+      return next(new ApiError(ApiError.CODES.SCRIPT_NOT_FOUND));
+    }
+
+    if (mod.cover) {
+      mod.cover = '/api/images/' + mod.cover;
+    }
+    else {
+      mod.cover = null;
+    }
+
+    await dbtransaction.commit();
+
+    return res.send({mod});
   }
   catch (e) {
+    if (dbtransaction) {
+      await dbtransaction.rollback();
+    }
+
     return next(e);
   }
-
-  if (!mod) {
-    return next(new ApiError(ApiError.CODES.SCRIPT_NOT_FOUND));
-  }
-  if (mod.cover) {
-    mod.cover = '/api/images/' + mod.cover;
-  }
-  else {
-    mod.cover = null;
-  }
-  return res.send({mod});
-}
+};

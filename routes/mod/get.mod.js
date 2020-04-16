@@ -1,26 +1,34 @@
+require('models/references');
 const path = require('path');
-const Mod = require('models/mod.model');
+
+const db = require('lib/lib.db').sequilize;
 const config = require(path.join(__dirname, '..', '..', 'config'));
 const {ApiError} = require('errors');
 
-require('models/references');
+const Mod = require('models/mod.model');
 
 module.exports = (router) => {
   router.get('/', request);
 };
 
-async function request(req, res, next) {
+let request = async (req, res, next) => {
+  let dbtransaction;
   let scripts, count;
   let limit = config.settings.maxCountElementOnPage;
   let query = {};
 
   try {
+    dbtransaction = await db.transaction();
+    let param = {transaction: dbtransaction};
+
     if (req.query.page) {
       if (!/^\d+$/.test(req.query.page) || req.query.page < 0) {
         return next(new ApiError(ApiError.CODES.INVALID_PARAMETERS));
       }
+
       req.query.page = +req.query.page;
       query.limit = limit;
+
       if (req.query.page === 0 || req.query.page === 1) {
         query.offset = 0;
       }
@@ -32,6 +40,7 @@ async function request(req, res, next) {
       query.limit = limit;
       query.offset = 0;
     }
+
     query.include = [
       {
         association: 'Creator',
@@ -43,35 +52,42 @@ async function request(req, res, next) {
       }
     ];
 
-    count = await Mod.count({});
-    scripts = await Mod.findAll(query);
-  }
-  catch (e) {
-    return next(e);
-  }
+    count = await Mod.count(Object.assign({}, param));
+    scripts = await Mod.findAll(Object.assign(query, param));
 
-  let pages = Math.ceil(count / limit);
+    let pages = Math.ceil(count / limit);
 
-  if (!scripts.length && count) {
-    return next(new ApiError(ApiError.CODES.PAGE_NOT_FOUND));
-  }
+    if (!scripts.length && count) {
+      return next(new ApiError(ApiError.CODES.PAGE_NOT_FOUND));
+    }
 
-  let page;
-  if (!req.query.page || req.query.page === 0 || req.query.page === 1) {
-    page = 1;
-  }
-  else {
-    page = req.query.page;
-  }
+    let page;
 
-  for (let i = 0; i < scripts.length; i++) {
-    if (scripts[i].cover) {
-      scripts[i].cover = '/api/images/' + scripts[i].cover;
+    if (!req.query.page || req.query.page === 0 || req.query.page === 1) {
+      page = 1;
     }
     else {
-      scripts[i].cover = null;
+      page = req.query.page;
     }
-  }
 
-  return res.send({mods: scripts, page, pages});
+    for (let i = 0; i < scripts.length; i++) {
+      if (scripts[i].cover) {
+        scripts[i].cover = '/api/images/' + scripts[i].cover;
+      }
+      else {
+        scripts[i].cover = null;
+      }
+    }
+
+    await dbtransaction.commit();
+
+    return res.send({mods: scripts, page, pages});
+  }
+  catch (e) {
+    if (dbtransaction) {
+      await dbtransaction.rollback();
+    }
+
+    return next(e);
+  }
 };

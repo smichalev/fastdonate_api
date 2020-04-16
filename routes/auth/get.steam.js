@@ -1,9 +1,9 @@
 const passport = require('passport');
 
 module.exports = (router) => {
-	router.get('/steam', passport.authenticate('steam', {failureRedirect: '/'}), request);
+  router.get('/steam', passport.authenticate('steam', {failureRedirect: '/'}), request);
 };
 
-function request(req, res, next) {
-	res.redirect('/');
+let request = (req, res, next) => {
+  res.redirect('/');
 };

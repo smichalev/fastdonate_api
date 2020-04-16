@@ -1,66 +1,74 @@
 const path = require('path');
 const passport = require('passport');
-const config = require(path.join(__dirname, '..', '..', 'config'));
 const jwt = require('jsonwebtoken');
-const User = require('models/user.model');
 const uuid = require('uuid');
+
+const db = require('lib/lib.db').sequilize;
+const config = require(path.join(__dirname, '..', '..', 'config'));
 const {ApiError} = require('errors');
 
+const User = require('models/user.model');
+
 module.exports = (router) => {
-	router.get('/steam/return', passport.authenticate('steam', {failureRedirect: '/'}), request);
+  router.get('/steam/return', passport.authenticate('steam', {failureRedirect: '/'}), request);
 };
 
-async function request(req, res, next) {
-	let {steamid, personaname, avatarfull, loccountrycode} = req.user._json;
-	let profileurl = req.user._json.steamid;
-	let user, result, token;
+let request = async (req, res, next) => {
+  let dbtransaction;
 
-	try {
-		user = await User.findOne({
-			where: {
-				steamid: steamid
-			}
-		});
-	} catch (e) {
-		return next(e);
-	}
+  try {
+    dbtransaction = await db.transaction();
+    let param = {transaction: dbtransaction};
 
-	if (!user) {
-		try {
-			result = await User.create({
-				id: uuid.v4(),
-				steamid,
-				login: personaname,
-				profile: profileurl,
-				avatar: avatarfull,
-				country: loccountrycode
-			});
-		} catch (e) {
-			return next(e);
-		}
-	}
-	else {
-		try {
-			user.login = personaname;
-			user.avatar = avatarfull;
-			user.country = loccountrycode;
-			result = await user.save();
-		} catch (e) {
-			return next(e)
-		}
-	}
+    let {steamid, personaname, avatarfull, loccountrycode} = req.user._json,
+      profileurl = req.user._json.steamid,
+      user,
+      token,
+      result;
 
-	if (!result) {
-		return next(new ApiError(ApiError.CODES.UNKNOWN_ERROR));
-	}
+    user = await User.findOne({
+      where: {
+        steamid: steamid
+      },
+      ...param
+    });
 
-	try {
-		req.session.user = result.dataValues;
-		req.session.save();
-		token = await jwt.sign(result.dataValues, config.authorization.secretKey);
-		token = `Bearer ${token}`;
-		return res.status(302).render('authorization', {token});
-	} catch (e) {
-		return next(e);
-	}
-}
+    if (!user) {
+      result = await User.create({
+        id: uuid.v4(),
+        steamid,
+        login: personaname,
+        profile: profileurl,
+        avatar: avatarfull,
+        country: loccountrycode
+      }, param);
+    }
+    else {
+      user.login = personaname;
+      user.avatar = avatarfull;
+      user.country = loccountrycode;
+      result = await user.save(param);
+    }
+
+    if (!result) {
+      return next(new ApiError(ApiError.CODES.UNKNOWN_ERROR));
+    }
+
+    req.session.user = result.dataValues;
+    req.session.save();
+
+    token = await jwt.sign(result.dataValues, config.authorization.secretKey);
+    token = `Bearer ${ token }`;
+
+    await dbtransaction.commit();
+
+    return res.status(302).render('authorization', {token});
+  }
+  catch (e) {
+    if (dbtransaction) {
+      await dbtransaction.rollback();
+    }
+
+    return next(e);
+  }
+};

@@ -1,30 +1,34 @@
+const db = require('lib/lib.db').sequilize;
+
+const {ApiError} = require('errors');
+
 const Comments = require('models/comments.model');
 const Mod = require('models/mod.model');
-const {ApiError} = require('errors');
 
 module.exports = (router) => {
   router.get('/:id', request);
 };
 
-async function request(req, res, next) {
-  let comments, mod;
+let request = async (req, res, next) => {
+  let dbtransaction;
 
   try {
+    dbtransaction = await db.transaction();
+    let param = {transaction: dbtransaction};
+
+    let comments, mod;
+
     mod = await Mod.count({
       where: {
         id: req.params.id
-      }
+      },
+      ...param
     });
-  }
-  catch (e) {
-    return next(e);
-  }
 
-  if (!mod) {
-    return next(new ApiError(ApiError.CODES.SCRIPT_NOT_FOUND));
-  }
+    if (!mod) {
+      return next(new ApiError(ApiError.CODES.SCRIPT_NOT_FOUND));
+    }
 
-  try {
     comments = await Comments.findAll({
       where: {
         essence: req.params.id
@@ -34,12 +38,19 @@ async function request(req, res, next) {
           association: 'Creator',
           attributes: ['id', 'login', 'avatar']
         }
-      ]
+      ],
+      ...param
     });
+
+    await dbtransaction.commit();
+
+    return res.send({comments});
   }
   catch (e) {
+    if (dbtransaction) {
+      await dbtransaction.rollback();
+    }
+
     return next(e);
   }
-
-  return res.send({comments});
-}
+};
