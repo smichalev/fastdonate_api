@@ -1,0 +1,8 @@
+{
+  "SUCCESS": {
+    "AUTHORIZATION": "AUTHORIZATION",
+    "LOGOUT": "LOGOUT",
+    "POST_MOD": "POST_MOD",
+    "RECRUIT": "RECRUIT"
+  }
+}

@@ -3,8 +3,8 @@ module.exports = {
   db: {
     host: '127.0.0.1',
     port: 5432,
-    username: 'fastdonate',
-    password: 'Xx1820082916',
+    username: 'postgres',
+    password: 'postgres',
     database: 'fastdonate',
     dialect: 'postgres'
   },
