@@ -13,6 +13,10 @@ const dictionary = {
 
 module.exports = (app, express) => {
 	app.use(passport.initialize());
+	app.get('/api/login', (req, res, next) => {
+		let result = req.session.user ? true : false;
+		return res.status(200).send({result});
+	});
 	app.get('/api/lang', (req, res, next) => {
 		let lang = !req.session.lang ? 'en' : req.session.lang;
 		
