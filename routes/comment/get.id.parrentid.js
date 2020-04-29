@@ -6,7 +6,7 @@ const Comments = require('models/comments.model');
 const Mod = require('models/mod.model');
 
 module.exports = (router) => {
-	router.get('/:id', request);
+	router.get('/:id/:parrentid', request);
 };
 
 let request = async (req, res, next) => {
@@ -23,10 +23,11 @@ let request = async (req, res, next) => {
 			return next(new ApiError(ApiError.CODES.SCRIPT_NOT_FOUND));
 		}
 		
+		
 		comments = await Comments.findAll({
 			where: {
 				essence: req.params.id,
-				parent: null,
+				parent: req.params.parrentid,
 			},
 			include: [
 				{
