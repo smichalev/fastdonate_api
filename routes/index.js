@@ -1,6 +1,4 @@
 const passport = require('passport');
-const jwt = require('jsonwebtoken');
-const config = require('config');
 const path = require('path');
 
 const {ApiError} = require('errors');
@@ -42,49 +40,30 @@ module.exports = (app, express) => {
 	});
 	app.use('/api/images', express.static(path.join(__dirname, '..', 'images')));
 	app.get('/api/profile', async (req, res, next) => {
-		if (!req.headers.authorization) {
-			return next(new ApiError(ApiError.CODES.YOU_ARE_NOT_LOGIN));
-		}
-		
 		if (!req.session || !req.session.user) {
 			return next(new ApiError(ApiError.CODES.SESSION_DIE));
 		}
 		
-		if (req.headers.authorization.split(' ').length === 2 && req.headers.authorization.split(' ')[0] === 'Bearer' && req.headers.authorization.split(' ')[1].split('.').length === 3) {
-			let profile, user;
-			
-			try {
-				profile = await jwt.decode(req.headers.authorization.split(' ')[1], config.authorization.secretKey);
-			}
-			catch (e) {
-				return next(e);
-			}
-			
-			if (!profile) {
-				return next(new ApiError(ApiError.CODES.TOKEN_NOT_VALID));
-			}
-			
-			try {
-				user = await User.findOne({
-					where: {
-						id: profile.id,
-					},
-					raw: true,
-				});
-			}
-			catch (e) {
-				return next(e);
-			}
-			
-			if (!user) {
-				return next(new ApiError(ApiError.CODES.USER_NOT_FOUND));
-			}
-			
-			return res.status(200).send({profile: user});
+		let profile = req.session.user;
+		let user;
+		
+		try {
+			user = await User.findOne({
+				where: {
+					id: profile.id,
+				},
+				raw: true,
+			});
 		}
-		else {
-			return next(new ApiError(ApiError.CODES.TOKEN_NOT_VALID));
+		catch (e) {
+			return next(e);
 		}
+		
+		if (!user) {
+			return next(new ApiError(ApiError.CODES.USER_NOT_FOUND));
+		}
+		
+		return res.status(200).send({profile: user});
 	});
 	app.use((err, req, res, next) => {
 		if (!err) {

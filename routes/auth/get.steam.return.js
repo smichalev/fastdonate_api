@@ -1,6 +1,5 @@
 const path = require('path');
 const passport = require('passport');
-const jwt = require('jsonwebtoken');
 const uuid = require('uuid');
 
 const event = require('data/events');
@@ -71,12 +70,9 @@ let request = async (req, res, next) => {
 		req.session.user = result.dataValues;
 		req.session.save();
 		
-		token = await jwt.sign(result.dataValues, config.authorization.secretKey);
-		token = `Bearer ${ token }`;
-		
 		await dbtransaction.commit();
 		
-		return res.status(302).render('authorization', {token});
+		return res.redirect('/');
 	}
 	catch (e) {
 		if (dbtransaction) {

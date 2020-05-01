@@ -1,6 +1,6 @@
-const path = require('path');
 const uuid = require('uuid');
-const fs = require('fs');
+const path = require('path');
+const upload = require('lib/lib.upload');
 
 const event = require('data/events');
 const db = require('lib/lib.db').sequilize;
@@ -21,12 +21,9 @@ module.exports = (router) => {
 let request = async (req, res, next) => {
 	let dbtransaction;
 	
-	let script, result, hashtags = [], promises = [], hashes = {}, imageFile, modFile;
+	let script, result, hashtags = [], promises = [], hashes = {};
 	let {price, discount, version, title, description} = req.body;
 	let hash = req.body.hash ? req.body.hash.split(',') : [];
-	
-	let imageFolder = path.join(__dirname, '..', '..', 'images');
-	let fileFolder = path.join(__dirname, '..', '..', 'files');
 	
 	try {
 		dbtransaction = await db.transaction();
@@ -36,29 +33,9 @@ let request = async (req, res, next) => {
 			return next(new ApiError(ApiError.CODES.REQUIRED_FIELD_IS_NOT_FILLED));
 		}
 		
-		if (req.files.image) {
-			req.files.image.mv(path.join(__dirname));
-			imageFile = req.files.image.md5 + '.' + req.files.image.name.split('.')[req.files.image.name.split('.').length - 1];
-		}
-		
-		modFile = req.files.mod.md5 + '.' + req.files.mod.name.split('.')[req.files.mod.name.split('.').length - 1];
-		
-		if (req.files.image) {
-			if (req.files.image.mimetype === 'image/jpeg' || req.files.image.mimetype === 'image/png') {
-				await fs.writeFileSync(imageFolder + '/' + req.files.image.md5 + '.' + req.files.image.name.split('.')[req.files.image.name.split('.').length - 1], Buffer.from(req.files.image.data, 'utf8'));
-			}
-			else {
-				return next(new ApiError(ApiError.CODES.INVALID_ATTACHMENT_FORMAT));
-			}
-		}
-		
-		if (req.files.mod.mimetype === 'application/zip' || req.files.mod.mimetype === 'application/gzip' || req.files.mod.mimetype === 'application/x-tar' || req.files.mod.mimetype === 'application/x-rar-compressed' || req.files.mod.mimetype === 'image/png') {
-			await fs.writeFileSync(fileFolder + '/' + req.files.mod.md5 + '.' + req.files.mod.name.split('.')[req.files.mod.name.split('.').length - 1], Buffer.from(req.files.mod.data, 'utf8'));
-		}
-		else {
-			return next(new ApiError(ApiError.CODES.INVALID_ATTACHMENT_FORMAT));
-		}
-		
+		let imageMod = await upload(req.files.image, 'mod', 'image');
+		let archiveMod = await upload(req.files.mod, 'mod', 'archive');
+	
 		for (let i = 0; i < hash.length; i++) {
 			if (!!!~hashtags.indexOf(hash[i])) {
 				hashtags.push(hash[i]);
@@ -103,7 +80,7 @@ let request = async (req, res, next) => {
 			title,
 			description,
 			discount,
-			cover: req.files.image ? imageFile : null,
+			cover: req.files.image ? imageMod : null,
 		}, param);
 		
 		for (let i = 0; i < hashtags.length; i++) {
@@ -134,7 +111,7 @@ let request = async (req, res, next) => {
 			parent: randomID,
 			creator,
 			type: 'script',
-			path: modFile,
+			path: archiveMod,
 		}, param);
 		
 		if (req.files.image) {
@@ -143,7 +120,7 @@ let request = async (req, res, next) => {
 				parent: randomID,
 				creator,
 				type: 'cover',
-				path: imageFile,
+				path: imageMod,
 			}, param);
 		}
 		

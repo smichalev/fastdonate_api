@@ -1,5 +1,6 @@
 /node_modules/
 /files/*.*
 /images/mods/*.*
+/files/mods/*.*
 .idea
 /config/index.js

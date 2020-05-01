@@ -1,6 +1,5 @@
 const config = require('config');
 const express = require('express');
-const morgan = require('morgan');
 const fileUpload = require('express-fileupload');
 const session = require('express-session');
 const helmet = require('helmet');
@@ -10,10 +9,6 @@ const bodyParser = require('body-parser');
 const app = express();
 
 app.use(cors());
-
-if (process.env.NODE_ENV === 'development') {
-	app.use(morgan('dev'));
-}
 
 app.use(helmet());
 app.set('views', __dirname + '/views');

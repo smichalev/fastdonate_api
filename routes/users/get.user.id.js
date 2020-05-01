@@ -8,7 +8,7 @@ const {ApiError} = require('errors');
 const Users = require('models/user.model');
 
 module.exports = (router) => {
-  router.get('/:id', mw.checkSession, request);
+  router.get('/:id', mw.checkLogin, request);
 };
 
 let request = async (req, res, next) => {

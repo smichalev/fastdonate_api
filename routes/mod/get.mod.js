@@ -72,7 +72,7 @@ let request = async (req, res, next) => {
 
     for (let i = 0; i < scripts.length; i++) {
       if (scripts[i].cover) {
-        scripts[i].cover = '/api/images/' + scripts[i].cover;
+        scripts[i].cover = '/api/images/mods/' + scripts[i].cover;
       }
       else {
         scripts[i].cover = null;

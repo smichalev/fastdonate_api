@@ -38,7 +38,7 @@ let request = async (req, res, next) => {
     }
 
     if (mod.cover) {
-      mod.cover = '/api/images/' + mod.cover;
+      mod.cover = '/api/images/mods/' + mod.cover;
     }
     else {
       mod.cover = null;

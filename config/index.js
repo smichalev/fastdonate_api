@@ -12,11 +12,14 @@ module.exports = {
   host: '127.0.0.1',
   port: 3000,
   authorization: {
-    secretKey: 'supersecretjwtkeyintheworld',
     steamApiKey: 'BCCF96617A7EBE4D4373410F0BC1A348'
   },
   settings: {
     maxCountElementOnPage: 10,
     maxHashtags: 6
+  },
+  files: {
+    maxSizeImage: 250000,
+    maxSizeArchive: 875000,
   }
 };
