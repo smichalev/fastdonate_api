@@ -32,7 +32,7 @@ let request = async (req, res, next) => {
 			include: [
 				{
 					association: 'Creator',
-					attributes: ['id', 'login', 'avatar', 'role'],
+					attributes: ['id', 'login', 'avatar', 'role', 'country'],
 				},
 			],
 			order: [['createdAt', 'ASC']],

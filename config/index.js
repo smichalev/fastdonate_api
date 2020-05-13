@@ -1,5 +1,8 @@
 module.exports = {
   project_name: 'FastDonate',
+  socket: {
+    port: 5555
+  },
   db: {
     host: '127.0.0.1',
     port: 5432,

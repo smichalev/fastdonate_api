@@ -1,6 +1,5 @@
 const passport = require('passport');
 const path = require('path');
-
 const {ApiError} = require('errors');
 
 const User = require(path.join(__dirname, '..', 'models', 'user.model'));
@@ -11,17 +10,20 @@ const dictionary = {
 
 module.exports = (app, express) => {
 	app.use(passport.initialize());
+	app.get('/api/ws', (req, res, next) => {
+		req.app.io.emit('profile', 'zalupa');
+		res.send('ok');
+	});
 	app.get('/api/login', (req, res, next) => {
 		let result = req.session.user ? true : false;
 		return res.status(200).send({result});
 	});
 	app.get('/api/lang', (req, res, next) => {
-		let lang = !req.session.lang ? 'en' : req.session.lang;
-		
+		let lang = ['ru', 'en', 'fr', 'gr', 'sp', 'ch'].indexOf(req.session.lang) === -1 ? 'en' : req.session.lang;
 		return res.status(200).send({lang});
 	});
 	app.post('/api/lang', (req, res, next) => {
-		if (!req.body.lang) {
+		if (!req.body.lang || ['ru', 'en', 'fr', 'gr', 'sp', 'ch'].indexOf(req.body.lang) === -1) {
 			return next(new ApiError(ApiError.CODES.INVALID_PARAMETERS));
 		}
 		
@@ -35,6 +37,7 @@ module.exports = (app, express) => {
 	app.use('/api/events', require(path.join(__dirname, 'events')));
 	app.use('/api/comment', require(path.join(__dirname, 'comment')));
 	app.use('/api/users', require(path.join(__dirname, 'users')));
+	app.use('/api/server', require(path.join(__dirname, 'server')));
 	app.get('/api/', (req, res) => {
 		res.render('index');
 	});

@@ -24,6 +24,11 @@ const CODES = {
 	VERY_LARGE_COMMENT: 18,
 	VERY_LARGE_IMAGE: 19,
 	VERY_LARGE_ARCHIVE: 20,
+	NOT_CORRECT_IP: 21,
+	NOT_CORRECT_PORT: 22,
+	NOT_CORRECT_GAME: 23,
+	GAME_SERVER_OFF: 24,
+	SERVER_RUNNING: 25,
 };
 const messages = {
 	[CODES.UNKNOWN_ERROR]: {
@@ -108,11 +113,31 @@ const messages = {
 	},
 	[CODES.VERY_LARGE_IMAGE]: {
 		status: 400,
-		message: `Maximum image size must not exceed ${bytes(config.files.maxSizeImage)}`,
+		message: `Maximum image size must not exceed ${ bytes(config.files.maxSizeImage) }`,
 	},
 	[CODES.VERY_LARGE_ARCHIVE]: {
 		status: 400,
-		message: `Maximum archive size must not exceed ${bytes(config.files.maxSizeArchive)}`,
+		message: `Maximum archive size must not exceed ${ bytes(config.files.maxSizeArchive) }`,
+	},
+	[CODES.NOT_CORRECT_IP]: {
+		status: 400,
+		message: `Not correct IP`,
+	},
+	[CODES.NOT_CORRECT_PORT]: {
+		status: 400,
+		message: `Not correct PORT`,
+	},
+	[CODES.NOT_CORRECT_GAME]: {
+		status: 400,
+		message: `Not correct GAME`,
+	},
+	[CODES.GAME_SERVER_OFF]: {
+		status: 400,
+		message: `Game server off`,
+	},
+	[CODES.SERVER_RUNNING]: {
+		status: 400,
+		message: `This server already exists`,
 	},
 };
 
